@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/dt-pm-tools/jira-cli/internal/jira"
+	"github.com/mreider/a-cli/internal/jira"
 	"gopkg.in/yaml.v3"
 )
 

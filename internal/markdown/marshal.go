@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dt-pm-tools/jira-cli/internal/jira"
+	"github.com/mreider/a-cli/internal/jira"
 )
 
 // Marker constants for preserved ADF nodes.

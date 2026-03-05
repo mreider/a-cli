@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dt-pm-tools/jira-cli/internal/jira"
-	"github.com/dt-pm-tools/jira-cli/internal/markdown"
+	"github.com/mreider/a-cli/internal/jira"
+	"github.com/mreider/a-cli/internal/markdown"
 	"github.com/spf13/cobra"
 )
 

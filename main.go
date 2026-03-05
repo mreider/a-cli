@@ -1,6 +1,6 @@
 package main
 
-import "github.com/dt-pm-tools/jira-cli/cmd"
+import "github.com/mreider/a-cli/cmd"
 
 func main() {
 	cmd.Execute()

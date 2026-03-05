@@ -1,4 +1,4 @@
-module github.com/dt-pm-tools/jira-cli
+module github.com/mreider/a-cli
 
 go 1.21
 

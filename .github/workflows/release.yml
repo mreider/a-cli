@@ -42,12 +42,12 @@ jobs:
           CGO_ENABLED: '0'
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
-        run: go build -ldflags="-s -w -X github.com/dt-pm-tools/jira-cli/cmd.version=${{ github.ref_name }}" -o jira-${{ matrix.suffix }} .
+        run: go build -ldflags="-s -w -X github.com/mreider/a-cli/cmd.version=${{ github.ref_name }}" -o a-cli-${{ matrix.suffix }} .
 
       - uses: actions/upload-artifact@v4
         with:
-          name: jira-${{ matrix.suffix }}
-          path: jira-${{ matrix.suffix }}
+          name: a-cli-${{ matrix.suffix }}
+          path: a-cli-${{ matrix.suffix }}
 
   release:
     needs: build

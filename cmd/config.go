@@ -7,15 +7,15 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/dt-pm-tools/jira-cli/internal/config"
+	"github.com/mreider/a-cli/internal/config"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
 
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Configure JIRA connection settings",
-	Long:  `Interactively set up JIRA URL, email, and API token. Settings are saved to ~/.jira-cli.yaml.`,
+	Short: "Configure Atlassian connection settings",
+	Long:  `Interactively set up Atlassian URL, email, and API token. Settings are saved to ~/.a-cli.yaml.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		reader := bufio.NewReader(os.Stdin)
 

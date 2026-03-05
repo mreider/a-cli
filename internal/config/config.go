@@ -16,13 +16,23 @@ type Config struct {
 	Token string `yaml:"token" mapstructure:"token"`
 }
 
-// DefaultPath returns the default config file path (~/.jira-cli.yaml).
+// DefaultPath returns the default config file path (~/.a-cli.yaml).
+// Also checks for legacy ~/.jira-cli.yaml if the new path doesn't exist.
 func DefaultPath() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return ".jira-cli.yaml"
+		return ".a-cli.yaml"
 	}
-	return filepath.Join(home, ".jira-cli.yaml")
+	newPath := filepath.Join(home, ".a-cli.yaml")
+	if _, err := os.Stat(newPath); err == nil {
+		return newPath
+	}
+	// Fall back to legacy path
+	legacyPath := filepath.Join(home, ".jira-cli.yaml")
+	if _, err := os.Stat(legacyPath); err == nil {
+		return legacyPath
+	}
+	return newPath
 }
 
 // Load reads config from the YAML file and applies env var overrides.

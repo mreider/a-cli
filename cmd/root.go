@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dt-pm-tools/jira-cli/internal/config"
+	"github.com/mreider/a-cli/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -15,9 +15,9 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "jira",
-	Short:   "JIRA <-> Markdown bidirectional sync tool",
-	Long:    `A CLI tool for pulling JIRA tickets to markdown and pushing markdown changes back to JIRA. Keeps JIRA access under explicit human control for AI data access policy compliance.`,
+	Use:     "a-cli",
+	Short:   "Atlassian <-> Markdown bidirectional sync tool",
+	Long:    `A CLI tool for syncing JIRA and Confluence content as markdown. Pull, search, edit, and push back. Keeps Atlassian access under explicit human control for AI data access policy compliance.`,
 	Version: version,
 }
 
@@ -29,7 +29,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ~/.jira-cli.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ~/.a-cli.yaml)")
 }
 
 // loadConfig loads and validates configuration. Commands that need JIRA access call this.
@@ -39,7 +39,7 @@ func loadConfig() error {
 		return fmt.Errorf("loading config: %w", err)
 	}
 	if err := cfg.Validate(); err != nil {
-		return fmt.Errorf("invalid config: %w\nRun 'jira config' to set up credentials", err)
+		return fmt.Errorf("invalid config: %w\nRun 'a-cli config' to set up credentials", err)
 	}
 	appConfig = cfg
 	return nil

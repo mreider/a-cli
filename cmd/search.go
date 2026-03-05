@@ -7,9 +7,9 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/dt-pm-tools/jira-cli/internal/dateparse"
-	"github.com/dt-pm-tools/jira-cli/internal/jira"
-	"github.com/dt-pm-tools/jira-cli/internal/markdown"
+	"github.com/mreider/a-cli/internal/dateparse"
+	"github.com/mreider/a-cli/internal/jira"
+	"github.com/mreider/a-cli/internal/markdown"
 	"github.com/spf13/cobra"
 )
 
@@ -36,20 +36,20 @@ var searchCmd = &cobra.Command{
 
 Examples:
   # Raw JQL
-  jira search --jql "project = PRODUCT AND status = 'In Progress'"
+  a-cli search --jql "project = PRODUCT AND status = 'In Progress'"
 
   # Smart filters (builds JQL automatically)
-  jira search --project PRODUCT --status "In Progress"
-  jira search --project PRODUCT --updated recent
-  jira search --project PRODUCT --type Bug --assignee me
-  jira search -p PRODUCT -l backend -l q1 --updated "last week"
+  a-cli search --project PRODUCT --status "In Progress"
+  a-cli search --project PRODUCT --updated recent
+  a-cli search --project PRODUCT --type Bug --assignee me
+  a-cli search -p PRODUCT -l backend -l q1 --updated "last week"
 
   # Text search
-  jira search -q "login error"
-  jira search --project PRODUCT -q "deployment"
+  a-cli search -q "login error"
+  a-cli search --project PRODUCT -q "deployment"
 
   # Pull all results to markdown files
-  jira search --project PRODUCT --updated recent --output-dir ./tickets
+  a-cli search --project PRODUCT --updated recent --output-dir ./tickets
 
 Smart date values for --updated/--created:
   today, yesterday, recent (7 days), last week, this week,

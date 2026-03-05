@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/dt-pm-tools/jira-cli/internal/config"
+	"github.com/mreider/a-cli/internal/config"
 )
 
 // Client is a JIRA REST API v3 client.

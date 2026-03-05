@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/dt-pm-tools/jira-cli/internal/jira"
-	"github.com/dt-pm-tools/jira-cli/internal/markdown"
+	"github.com/mreider/a-cli/internal/jira"
+	"github.com/mreider/a-cli/internal/markdown"
 	"github.com/spf13/cobra"
 )
 
@@ -35,8 +35,8 @@ var confluenceGetCmd = &cobra.Command{
 	Long: `Fetches a Confluence page by ID or URL and converts it to markdown with YAML frontmatter.
 
 Accepts either a numeric page ID or a full Confluence URL:
-  jira confluence get 85962893
-  jira confluence get https://your-org.atlassian.net/wiki/spaces/SPACE/pages/85962893/Page+Title
+  a-cli confluence get 85962893
+  a-cli confluence get https://your-org.atlassian.net/wiki/spaces/SPACE/pages/85962893/Page+Title
 
 Writes to stdout by default, or to a file with --output-dir.`,
 	Args: cobra.ExactArgs(1),
@@ -212,7 +212,7 @@ Use --dry-run to preview the ADF output without applying.`,
 			},
 			Version: jira.ConfluenceUpdateVersion{
 				Number:  newVersion,
-				Message: "Updated via jira-cli push",
+				Message: "Updated via a-cli push",
 			},
 		}
 
@@ -236,10 +236,10 @@ a child page under an existing page (by page ID or URL), and --file to use a
 markdown file as the initial body content.
 
 Examples:
-  jira confluence create --space ENG --title "Decision Log"
-  jira confluence create --space ENG --title "Decision Log" --parent 85962893
-  jira confluence create --space ENG --title "Decision Log" --parent https://org.atlassian.net/wiki/spaces/ENG/pages/85962893/Parent --file body.md
-  jira confluence create --space ENG --title "Decision Log" --output-dir ./pages`,
+  a-cli confluence create --space ENG --title "Decision Log"
+  a-cli confluence create --space ENG --title "Decision Log" --parent 85962893
+  a-cli confluence create --space ENG --title "Decision Log" --parent https://org.atlassian.net/wiki/spaces/ENG/pages/85962893/Parent --file body.md
+  a-cli confluence create --space ENG --title "Decision Log" --output-dir ./pages`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if confluenceCreateSpace == "" {
 			return fmt.Errorf("--space is required")

@@ -1,9 +1,9 @@
 #!/bin/sh
 set -e
 
-REPO="mreider/jira-cli"
+REPO="mreider/a-cli"
 INSTALL_DIR="/usr/local/bin"
-BINARY="jira"
+BINARY="a-cli"
 
 # Detect OS and architecture
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
@@ -60,4 +60,4 @@ fi
 
 echo "Installed ${BINARY} ${LATEST} to ${INSTALL_DIR}/${BINARY}"
 echo ""
-echo "Run 'jira config' to set up your Atlassian credentials."
+echo "Run 'a-cli config' to set up your Atlassian credentials."

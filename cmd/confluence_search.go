@@ -7,9 +7,9 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/dt-pm-tools/jira-cli/internal/dateparse"
-	"github.com/dt-pm-tools/jira-cli/internal/jira"
-	"github.com/dt-pm-tools/jira-cli/internal/markdown"
+	"github.com/mreider/a-cli/internal/dateparse"
+	"github.com/mreider/a-cli/internal/jira"
+	"github.com/mreider/a-cli/internal/markdown"
 	"github.com/spf13/cobra"
 )
 
@@ -30,18 +30,18 @@ var confluenceSearchCmd = &cobra.Command{
 
 Examples:
   # Text search
-  jira confluence search "deployment guide"
+  a-cli confluence search "deployment guide"
 
   # Filter by space and labels
-  jira confluence search --space ENG --label architecture
-  jira confluence search --space ENG --label architecture "deployment"
+  a-cli confluence search --space ENG --label architecture
+  a-cli confluence search --space ENG --label architecture "deployment"
 
   # Recent pages
-  jira confluence search --space ENG --updated recent
-  jira confluence search --updated "last week"
+  a-cli confluence search --space ENG --updated recent
+  a-cli confluence search --updated "last week"
 
   # Pull results to markdown files
-  jira confluence search --space ENG --updated recent --output-dir ./pages
+  a-cli confluence search --space ENG --updated recent --output-dir ./pages
 
 Smart date values for --updated/--created:
   today, yesterday, recent (7 days), last week, this week,

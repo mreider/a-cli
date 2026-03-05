@@ -1,5 +1,5 @@
 GO ?= /usr/local/go/bin/go
-BINARY := jira
+BINARY := a-cli
 
 .PHONY: build clean
 
