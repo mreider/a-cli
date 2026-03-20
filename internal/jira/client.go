@@ -417,9 +417,15 @@ func formatAPIError(statusCode int, body []byte) error {
 		for field, msg := range je.Errors {
 			parts = append(parts, field+": "+msg)
 		}
-		return fmt.Errorf("JIRA API %d: %s", statusCode, strings.Join(parts, "; "))
+		msg := strings.Join(parts, "; ")
+		// Always append the raw body so field-level details aren't lost
+		raw := strings.TrimSpace(string(body))
+		if raw != "" && raw != msg {
+			return fmt.Errorf("JIRA API %d: %s\nResponse body: %s", statusCode, msg, raw)
+		}
+		return fmt.Errorf("JIRA API %d: %s", statusCode, msg)
 	}
-	return fmt.Errorf("JIRA API returned %d: %s", statusCode, string(body))
+	return fmt.Errorf("JIRA API %d: %s", statusCode, string(body))
 }
 
 func (c *Client) setHeaders(req *http.Request) {

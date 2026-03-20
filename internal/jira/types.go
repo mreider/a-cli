@@ -63,6 +63,7 @@ type Comment struct {
 // ADFNode represents a node in the Atlassian Document Format.
 type ADFNode struct {
 	Type    string         `json:"type"`
+	Version *int           `json:"version,omitempty"`
 	Content []ADFNode      `json:"content,omitempty"`
 	Text    string         `json:"text,omitempty"`
 	Attrs   map[string]any `json:"attrs,omitempty"`

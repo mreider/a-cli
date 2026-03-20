@@ -291,9 +291,10 @@ func parseComments(section string) []TicketComment {
 
 // markdownToADF converts markdown text to an ADF document node.
 func markdownToADF(md string) (*jira.ADFNode, error) {
+	v := 1
 	doc := &jira.ADFNode{
 		Type:    "doc",
-		Attrs:   map[string]any{"version": 1},
+		Version: &v,
 		Content: []jira.ADFNode{},
 	}
 
@@ -473,17 +474,43 @@ func parseHeading(line string) (int, string) {
 }
 
 // parseList parses a bullet or ordered list from lines starting at index i.
-// Handles nested lists via indentation.
+// Handles nested lists via indentation. Blank lines between items are tolerated
+// so that "loose" markdown lists produce a single ADF list node.
 func parseList(lines []string, i int, ordered bool) ([]jira.ADFNode, int) {
 	var items []jira.ADFNode
 	listRe := regexp.MustCompile(`^[-*]\s`)
 	ordRe := regexp.MustCompile(`^\d+\.\s`)
-	// Indented sub-items (3+ spaces or tab, then list marker)
+	// Indented sub-items (2+ spaces or tab, then list marker)
 	indentedBulletRe := regexp.MustCompile(`^(\s{2,}|\t)[-*]\s`)
 	indentedOrdRe := regexp.MustCompile(`^(\s{2,}|\t)\d+\.\s`)
 
 	for i < len(lines) {
 		line := lines[i]
+
+		// Skip blank lines between list items (loose lists)
+		if strings.TrimSpace(line) == "" {
+			// Peek ahead: if a matching list item follows, skip the blank line(s)
+			j := i
+			for j < len(lines) && strings.TrimSpace(lines[j]) == "" {
+				j++
+			}
+			if j < len(lines) {
+				nextIsItem := false
+				if ordered {
+					nextIsItem = ordRe.MatchString(lines[j])
+				} else {
+					nextIsItem = listRe.MatchString(lines[j])
+				}
+				if nextIsItem {
+					i = j
+					line = lines[i]
+				} else {
+					break
+				}
+			} else {
+				break
+			}
+		}
 
 		isItem := false
 		var text string
@@ -741,7 +768,7 @@ func BodyToADF(markdownBody string) (*jira.ADFNode, error) {
 // parseInline converts inline markdown (bold, italic, code, links, strike) to ADF nodes.
 func parseInline(text string) []jira.ADFNode {
 	if text == "" {
-		return []jira.ADFNode{{Type: "text", Text: ""}}
+		return nil
 	}
 
 	var nodes []jira.ADFNode
