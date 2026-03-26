@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -43,7 +45,7 @@ func (c *Client) GetIssue(key string) (*Issue, error) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("executing request: %w", err)
+		return nil, formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -77,7 +79,7 @@ func (c *Client) UpdateIssue(key string, payload UpdatePayload) error {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("executing request: %w", err)
+		return formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -101,7 +103,7 @@ func (c *Client) GetTransitions(key string) ([]TransitionInfo, error) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("executing request: %w", err)
+		return nil, formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -139,7 +141,7 @@ func (c *Client) DoTransition(key string, transitionID string) error {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("executing request: %w", err)
+		return formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -163,7 +165,7 @@ func (c *Client) GetConfluencePage(pageID string) (*ConfluencePage, error) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("executing request: %w", err)
+		return nil, formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -192,7 +194,7 @@ func (c *Client) GetConfluenceSpace(spaceID string) (*ConfluenceSpace, error) {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("executing request: %w", err)
+		return nil, formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -221,7 +223,7 @@ func (c *Client) GetConfluenceSpaceByKey(spaceKey string) (*ConfluenceSpace, err
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("executing request: %w", err)
+		return nil, formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -259,7 +261,7 @@ func (c *Client) CreateConfluencePage(payload ConfluenceCreatePayload) (*Conflue
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("executing request: %w", err)
+		return nil, formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -291,7 +293,7 @@ func (c *Client) GetConfluenceChildPages(pageID string) ([]ConfluenceChildPage, 
 
 		resp, err := c.httpClient.Do(req)
 		if err != nil {
-			return nil, fmt.Errorf("executing request: %w", err)
+			return nil, formatNetworkError(err)
 		}
 
 		if resp.StatusCode != http.StatusOK {
@@ -333,7 +335,7 @@ func (c *Client) GetConfluenceFooterComments(pageID string) ([]ConfluenceComment
 
 		resp, err := c.httpClient.Do(req)
 		if err != nil {
-			return nil, fmt.Errorf("executing request: %w", err)
+			return nil, formatNetworkError(err)
 		}
 
 		if resp.StatusCode != http.StatusOK {
@@ -376,7 +378,7 @@ func (c *Client) GetConfluenceInlineComments(pageID string) ([]ConfluenceComment
 
 		resp, err := c.httpClient.Do(req)
 		if err != nil {
-			return nil, fmt.Errorf("executing request: %w", err)
+			return nil, formatNetworkError(err)
 		}
 
 		// Known Confluence bug: returns 404 on pages with resolved inline comments
@@ -448,7 +450,7 @@ func (c *Client) UpdateConfluencePage(pageID string, payload ConfluenceUpdatePay
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("executing request: %w", err)
+		return formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -484,7 +486,7 @@ func (c *Client) SearchIssues(jql string, maxResults int, startAt int) (*SearchR
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("executing request: %w", err)
+		return nil, formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -518,7 +520,7 @@ func (c *Client) SearchConfluence(cql string, limit int, start int) (*Confluence
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("executing request: %w", err)
+		return nil, formatNetworkError(err)
 	}
 	defer resp.Body.Close()
 
@@ -560,6 +562,24 @@ func formatAPIError(statusCode int, body []byte) error {
 		return fmt.Errorf("JIRA API %d: %s", statusCode, msg)
 	}
 	return fmt.Errorf("JIRA API %d: %s", statusCode, string(body))
+}
+
+func formatNetworkError(err error) error {
+	var netErr net.Error
+	if errors.As(err, &netErr) && netErr.Timeout() {
+		return fmt.Errorf("connection timed out — check your network connection or VPN, then try again")
+	}
+	var opErr *net.OpError
+	if errors.As(err, &opErr) {
+		if opErr.Op == "dial" {
+			return fmt.Errorf("could not connect to server — check your network connection or VPN, then try again")
+		}
+	}
+	var dnsErr *net.DNSError
+	if errors.As(err, &dnsErr) {
+		return fmt.Errorf("DNS lookup failed for %s — check the URL in your config", dnsErr.Name)
+	}
+	return fmt.Errorf("network error: %w", err)
 }
 
 func (c *Client) setHeaders(req *http.Request) {

@@ -11,7 +11,7 @@ import (
 var (
 	cfgFile   string
 	appConfig config.Config
-	version   = "0.1.0"
+	version   = "dev"
 )
 
 var rootCmd = &cobra.Command{
